@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>髮沙龍後台管理系統</title>
+<style>
+:root{
+  --bg-0:#07060d;
+  --glass-bg:rgba(255,255,255,0.055);
+  --glass-bg-2:rgba(255,255,255,0.09);
+  --glass-border:rgba(255,255,255,0.14);
+  --glass-border-soft:rgba(255,255,255,0.08);
+  --neon-pink:#ff6ec7;
+  --neon-purple:#a26bff;
+  --neon-blue:#4dd6ff;
+  --neon-green:#3dffb0;
+  --text-1:#f1f2fb;
+  --text-2:#a7acc9;
+  --text-3:#6e7391;
+  --danger:#ff5c7a;
+  --warning:#ffc95c;
+  --radius-lg:22px;
+  --radius-md:16px;
+  --radius-sm:11px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",Segoe UI,Roboto,sans-serif;
+  color:var(--text-1);
+  background-color:var(--bg-0);
+  background-image:
+    radial-gradient(circle at 15% -5%, rgba(162,107,255,0.30) 0%, transparent 42%),
+    radial-gradient(circle at 88% 8%, rgba(77,214,255,0.22) 0%, transparent 40%),
+    radial-gradient(circle at 50% 105%, rgba(255,110,199,0.18) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(61,255,176,0.10) 0%, transparent 45%);
+  background-attachment:fixed;
+  padding-bottom:40px;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(162,107,255,0.4);}
+a{color:inherit;}
+.gradient-text{
+  background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple) 45%,var(--neon-blue) 85%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 14px rgba(162,107,255,0.35));
+}
+.glass{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-radius:var(--radius-lg);
+  box-shadow:0 10px 34px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.glass-sm{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border-soft);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-radius:var(--radius-md);
+}
+header.topbar{
+  position:sticky;top:0;z-index:40;
+  padding:14px 16px 10px;
+  background:linear-gradient(180deg, rgba(7,6,13,0.92), rgba(7,6,13,0.75) 70%, transparent);
+  backdrop-filter:blur(10px);
+}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;flex-wrap:wrap;gap:8px;}
+.brand{display:flex;flex-direction:column;line-height:1.25;}
+.brand .name{font-size:19px;font-weight:800;letter-spacing:0.5px;}
+.brand .sub{font-size:11.5px;color:var(--text-3);}
+.topbar-right{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text-2);}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--neon-green);box-shadow:0 0 8px var(--neon-green);display:inline-block;margin-right:6px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+
+nav.tabs{
+  position:sticky;top:64px;z-index:39;
+  display:flex;gap:8px;overflow-x:auto;
+  padding:6px 16px 14px;
+  max-width:1100px;margin:0 auto;
+  scrollbar-width:none;
+}
+nav.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{
+  flex:0 0 auto;
+  display:flex;align-items:center;gap:6px;
+  padding:9px 16px;
+  border-radius:999px;
+  border:1px solid var(--glass-border-soft);
+  background:rgba(255,255,255,0.03);
+  color:var(--text-2);
+  font-size:13.5px;font-weight:600;
+  cursor:pointer;white-space:nowrap;
+  transition:all .18s ease;
+}
+.tab-btn:active{transform:scale(0.96);}
+.tab-btn.active{
+  color:#0a0a14;
+  background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple),var(--neon-blue));
+  border-color:transparent;
+  box-shadow:0 0 18px rgba(162,107,255,0.5);
+}
+
+main{max-width:1100px;margin:0 auto;padding:4px 16px 60px;}
+.view{display:none;animation:fadein .25s ease;}
+.view.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.section-title{font-size:15px;font-weight:800;margin:26px 0 12px;display:flex;align-items:center;gap:8px;color:var(--text-1);}
+.section-title:first-child{margin-top:6px;}
+.section-title .tag{font-size:10.5px;font-weight:700;color:var(--neon-blue);background:rgba(77,214,255,0.12);border:1px solid rgba(77,214,255,0.3);padding:2px 8px;border-radius:999px;}
+
+.grid{display:grid;gap:14px;}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+@media(max-width:860px){.grid-4{grid-template-columns:repeat(2,1fr);}.grid-3{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr;}}
+
+.stat-card{padding:18px;position:relative;overflow:hidden;}
+.stat-card .label{font-size:12px;color:var(--text-2);font-weight:600;margin-bottom:8px;}
+.stat-card .value{font-size:26px;font-weight:800;}
+.stat-card .foot{font-size:11.5px;color:var(--text-3);margin-top:6px;}
+.stat-card .glow{position:absolute;width:90px;height:90px;border-radius:50%;filter:blur(30px);opacity:0.5;top:-30px;right:-30px;}
+
+.progress-outer{height:9px;border-radius:999px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:10px;}
+.progress-inner{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple),var(--neon-blue));box-shadow:0 0 10px rgba(162,107,255,0.6);}
+
+.card{padding:18px;margin-bottom:16px;}
+.card h3{margin:0 0 14px;font-size:14.5px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card h3 small{font-size:11px;color:var(--text-3);font-weight:500;}
+
+.rank-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.rank-row:last-child{border-bottom:none;}
+.rank-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:rgba(255,255,255,0.08);flex:0 0 auto;}
+.rank-num.n1{background:linear-gradient(135deg,#ffd76e,#ff9a3d);color:#3a2400;}
+.rank-num.n2{background:linear-gradient(135deg,#d8dee8,#9aa4b8);color:#1c2230;}
+.rank-num.n3{background:linear-gradient(135deg,#e8b088,#b0703f);color:#2a1608;}
+.rank-body{flex:1;min-width:0;}
+.rank-name{font-size:13.5px;font-weight:700;display:flex;justify-content:space-between;gap:8px;}
+.rank-amt{color:var(--neon-green);font-weight:800;font-size:13px;}
+.rank-bar-outer{height:6px;border-radius:999px;background:rgba(255,255,255,0.07);margin-top:6px;overflow:hidden;}
+.rank-bar-inner{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--neon-purple),var(--neon-blue));}
+
+.legend-row{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13px;}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex:0 0 auto;}
+.legend-name{flex:1;color:var(--text-2);}
+.legend-pct{font-weight:800;}
+.donut-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.donut{width:130px;height:130px;border-radius:50%;flex:0 0 auto;position:relative;}
+.donut::after{content:attr(data-total);position:absolute;inset:18px;border-radius:50%;background:#0c0b16;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--text-1);text-align:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.07);}
+.donut-center{position:absolute;inset:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;text-align:center;line-height:1.3;color:var(--text-1);background:#0c0b16;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.07);}
+.legend-list{flex:1;min-width:180px;}
+
+.btn{
+  border:none;cursor:pointer;font-weight:700;font-size:13px;
+  padding:10px 18px;border-radius:999px;
+  background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple),var(--neon-blue));
+  color:#0a0a14;
+  box-shadow:0 4px 16px rgba(162,107,255,0.35);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn:active{transform:scale(0.96);}
+.btn.secondary{background:rgba(255,255,255,0.08);color:var(--text-1);box-shadow:none;border:1px solid var(--glass-border);}
+.btn.danger{background:linear-gradient(90deg,#ff5c7a,#ff3d5f);color:#1a0308;}
+.btn.ghost{background:transparent;color:var(--neon-blue);box-shadow:none;border:1px solid rgba(77,214,255,0.35);}
+.btn.sm{padding:6px 12px;font-size:12px;}
+.btn.block{width:100%;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.icon-btn{background:rgba(255,255,255,0.06);border:1px solid var(--glass-border-soft);color:var(--text-2);width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;}
+.icon-btn:active{transform:scale(0.92);}
+.icon-btn.danger{color:var(--danger);}
+
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;color:var(--text-3);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:0.4px;padding:8px 10px;border-bottom:1px solid var(--glass-border-soft);}
+td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,0.05);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.table-wrap table{min-width:560px;}
+.empty-state{text-align:center;padding:34px 10px;color:var(--text-3);font-size:13px;}
+.empty-state .em{font-size:30px;display:block;margin-bottom:8px;opacity:0.7;}
+
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;}
+.badge.role-manager{background:rgba(255,110,199,0.15);color:var(--neon-pink);border:1px solid rgba(255,110,199,0.35);}
+.badge.role-stylist{background:rgba(162,107,255,0.15);color:var(--neon-purple);border:1px solid rgba(162,107,255,0.4);}
+.badge.role-assistant{background:rgba(77,214,255,0.15);color:var(--neon-blue);border:1px solid rgba(77,214,255,0.35);}
+.badge.role-front{background:rgba(61,255,176,0.15);color:var(--neon-green);border:1px solid rgba(61,255,176,0.35);}
+.badge.low{background:rgba(255,92,122,0.15);color:var(--danger);border:1px solid rgba(255,92,122,0.4);}
+.badge.ok{background:rgba(61,255,176,0.12);color:var(--neon-green);border:1px solid rgba(61,255,176,0.3);}
+.badge.warn60{background:rgba(255,201,92,0.15);color:var(--warning);border:1px solid rgba(255,201,92,0.4);}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.field label{font-size:12px;color:var(--text-2);font-weight:600;}
+.field input,.field select,.field textarea{
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--glass-border);
+  color:var(--text-1);
+  padding:10px 12px;
+  border-radius:var(--radius-sm);
+  font-size:14px;
+  outline:none;
+  font-family:inherit;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--neon-purple);box-shadow:0 0 0 3px rgba(162,107,255,0.18);}
+.field small{color:var(--text-3);font-size:11px;}
+.checkbox-row{display:flex;align-items:center;gap:8px;}
+.checkbox-row input{width:16px;height:16px;}
+.weekday-picker{display:flex;gap:6px;flex-wrap:wrap;}
+.weekday-chip{padding:7px 0;width:38px;text-align:center;border-radius:9px;border:1px solid var(--glass-border-soft);background:rgba(255,255,255,0.04);font-size:12px;font-weight:700;color:var(--text-2);cursor:pointer;}
+.weekday-chip.on{background:linear-gradient(90deg,var(--neon-purple),var(--neon-blue));color:#0a0a14;border-color:transparent;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(4,3,10,0.72);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+@media(min-width:640px){.modal-overlay{align-items:center;}}
+.modal-box{width:100%;max-width:540px;max-height:88vh;overflow-y:auto;padding:20px;border-radius:24px 24px 0 0;}
+@media(min-width:640px){.modal-box{border-radius:24px;}}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.modal-head h2{font-size:17px;margin:0;font-weight:800;}
+.close-x{background:rgba(255,255,255,0.08);border:none;color:var(--text-1);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;}
+
+.pill-line{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;color:var(--text-2);}
+.pill-line b{color:var(--text-1);}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:rgba(20,18,32,0.95);border:1px solid var(--glass-border);color:var(--text-1);padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+.item-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border-soft);border-radius:12px;padding:10px;margin-bottom:8px;}
+.item-row .grow{flex:1;min-width:0;}
+.item-row .name{font-size:13px;font-weight:700;}
+.item-row .meta{font-size:11px;color:var(--text-3);}
+.item-row input.num{width:80px;}
+
+.summary-box{background:rgba(255,255,255,0.05);border:1px solid var(--glass-border-soft);border-radius:14px;padding:14px;margin-top:6px;}
+.summary-box .row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--text-2);}
+.summary-box .row.total{font-size:16px;font-weight:800;color:var(--text-1);border-top:1px solid var(--glass-border-soft);margin-top:6px;padding-top:10px;}
+.summary-box .row.commission b{color:var(--neon-green);}
+
+.subtabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.subtab-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--glass-border-soft);background:rgba(255,255,255,0.03);color:var(--text-2);font-size:12.5px;font-weight:700;cursor:pointer;}
+.subtab-btn.active{background:rgba(162,107,255,0.18);border-color:rgba(162,107,255,0.5);color:var(--neon-purple);}
+
+.search-bar{display:flex;gap:8px;margin-bottom:14px;}
+.search-bar input{flex:1;}
+
+footer.app-foot{max-width:1100px;margin:30px auto 0;padding:0 16px;color:var(--text-3);font-size:11.5px;text-align:center;}
+.hint-card{padding:14px 16px;font-size:12.5px;color:var(--text-2);line-height:1.6;}
+.hint-card b{color:var(--text-1);}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="name gradient-text" id="salonNameDisplay">髮沙龍後台</span>
+      <span class="sub">老闆專屬管理主控台</span>
+    </div>
+    <div class="topbar-right">
+      <span><span class="dot-live"></span>即時資料</span>
+      <span id="clockDisplay"></span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button class="tab-btn" data-view="dashboard">📊 總覽</button>
+    <button class="tab-btn" data-view="commission">💰 薪資抽成</button>
+    <button class="tab-btn" data-view="menu">🧾 菜單庫存</button>
+    <button class="tab-btn" data-view="staff">👥 員工排班</button>
+    <button class="tab-btn" data-view="customers">🎟️ 顧客票券</button>
+    <button class="tab-btn" data-view="settings">⚙️ 設定備份</button>
+  </nav>
+</header>
+
+<main>
+
+<section class="view" id="view-dashboard">
+  <div class="grid grid-4" id="dashStats"></div>
+
+  <div class="section-title"><span class="tag">目標</span>本月營收達成率</div>
+  <div class="card glass">
+    <div class="pill-line"><span>本月目標</span><b id="dashTargetVal">-</b></div>
+    <div class="pill-line"><span>本月累計營收</span><b id="dashRevenueVal">-</b></div>
+    <div class="progress-outer"><div class="progress-inner" id="dashTargetBar" style="width:0%"></div></div>
+    <div class="pill-line"><span id="dashTargetPctLabel"></span><span></span></div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card glass">
+      <h3>熱門服務項目占比 <small>本月營收</small></h3>
+      <div id="dashCategoryDonut"></div>
+    </div>
+    <div class="card glass">
+      <h3>設計師即時業績排行榜 <small>本月營收</small></h3>
+      <div id="dashRanking"></div>
+    </div>
+  </div>
+
+  <div class="card glass">
+    <h3>近期結帳紀錄 <small>最新 8 筆</small></h3>
+    <div id="dashRecent"></div>
+  </div>
+</section>
+
+<section class="view" id="view-commission">
+  <div class="subtabs" data-panel-prefix="sub">
+    <button class="subtab-btn" data-sub="checkout">➕ 新增結帳</button>
+    <button class="subtab-btn" data-sub="records">📋 結帳紀錄</button>
+    <button class="subtab-btn" data-sub="settle">📆 月結報表</button>
+  </div>
+
+  <div id="sub-checkout">
+    <div class="card glass">
+      <h3>新增結帳</h3>
+      <div class="form-grid">
+        <div class="field"><label>日期</label><input type="date" id="coDate"></div>
+        <div class="field"><label>設計師 / 服務人員</label><select id="coEmployee"></select></div>
+        <div class="field"><label>顧客（可留空）</label><select id="coCustomer"><option value="">-- 不指定 --</option></select></div>
+        <div class="field"><label>付款方式</label>
+          <select id="coPayMethod">
+            <option value="cash">現金／其他即時付款</option>
+            <option value="prepaid">扣抵儲值金／堂數券</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" id="coPrepaidWrap" style="display:none;">
+        <label>選擇顧客票券</label>
+        <select id="coPrepaidCard"></select>
+        <small id="coPrepaidCardInfo"></small>
+      </div>
+
+      <div class="section-title" style="margin-top:8px;">服務項目</div>
+      <div id="coServiceList"></div>
+      <div class="field">
+        <select id="coAddServiceSelect"></select>
+        <button class="btn secondary sm" style="margin-top:8px;" data-action="co-add-service">+ 加入服務項目</button>
+      </div>
+
+      <div class="section-title">加購商品（不計入抽成）</div>
+      <div id="coProductList"></div>
+      <div class="field">
+        <select id="coAddProductSelect"></select>
+        <button class="btn secondary sm" style="margin-top:8px;" data-action="co-add-product">+ 加入商品</button>
+      </div>
+
+      <div class="field"><label>備註</label><input type="text" id="coNote" placeholder="選填"></div>
+
+      <div class="summary-box" id="coSummary"></div>
+      <div class="btn-row">
+        <button class="btn block" data-action="co-submit">✔ 完成結帳並計算抽成</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sub-records" style="display:none;">
+    <div class="search-bar">
+      <input type="date" id="recFilterDate">
+      <select id="recFilterEmployee"><option value="">全部人員</option></select>
+    </div>
+    <div class="card glass">
+      <div class="table-wrap"><table id="recordsTable"></table></div>
+    </div>
+  </div>
+
+  <div id="sub-settle" style="display:none;">
+    <div class="card glass">
+      <h3>月結業績與抽成總表</h3>
+      <div class="form-grid">
+        <div class="field"><label>選擇月份</label><input type="month" id="settleMonth"></div>
+      </div>
+      <button class="btn" data-action="settle-generate">📆 產生本月結算表</button>
+      <div id="settleResult" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-menu">
+  <div class="subtabs" data-panel-prefix="submenu">
+    <button class="subtab-btn" data-sub="services">✂️ 服務項目</button>
+    <button class="subtab-btn" data-sub="products">🧴 商品庫存</button>
+  </div>
+
+  <div id="submenu-services">
+    <button class="btn" data-action="open-service-modal">+ 新增服務項目</button>
+    <div class="card glass" style="margin-top:12px;">
+      <div class="table-wrap"><table id="servicesTable"></table></div>
+    </div>
+  </div>
+
+  <div id="submenu-products" style="display:none;">
+    <button class="btn" data-action="open-product-modal">+ 新增商品</button>
+    <div class="card glass" style="margin-top:12px;">
+      <div class="table-wrap"><table id="productsTable"></table></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-staff">
+  <div class="subtabs" data-panel-prefix="substaff">
+    <button class="subtab-btn" data-sub="stafflist">👤 員工名單</button>
+    <button class="subtab-btn" data-sub="schedule">🗓️ 排班與公休</button>
+  </div>
+
+  <div id="substaff-stafflist">
+    <button class="btn" data-action="open-employee-modal">+ 新增員工</button>
+    <div class="card glass" style="margin-top:12px;">
+      <div class="table-wrap"><table id="employeesTable"></table></div>
+    </div>
+  </div>
+
+  <div id="substaff-schedule" style="display:none;">
+    <div class="card glass">
+      <h3>店休日設定 <small>每週固定公休</small></h3>
+      <div class="weekday-picker" id="weeklyClosedPicker"></div>
+    </div>
+    <div class="card glass">
+      <h3>特定公休日 <small>如國定假日、特殊公休</small></h3>
+      <div class="btn-row">
+        <input type="date" id="closedDateInput" style="background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-1);padding:9px 12px;border-radius:10px;">
+        <button class="btn secondary sm" data-action="add-closed-date">+ 加入</button>
+      </div>
+      <div id="closedDatesList" style="margin-top:10px;"></div>
+    </div>
+    <div class="card glass">
+      <h3>員工每週排班</h3>
+      <div id="staffScheduleList"></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-customers">
+  <div class="subtabs" data-panel-prefix="subcust">
+    <button class="subtab-btn" data-sub="custlist">👤 顧客名單</button>
+    <button class="subtab-btn" data-sub="inactive">⏰ 逾期未到店</button>
+    <button class="subtab-btn" data-sub="cards">🎫 儲值 / 堂數券</button>
+  </div>
+
+  <div id="subcust-custlist">
+    <div class="search-bar">
+      <input type="text" id="custSearch" placeholder="搜尋姓名或電話">
+      <button class="btn secondary sm" data-action="open-customer-modal">+ 新增顧客</button>
+    </div>
+    <div class="card glass"><div class="table-wrap"><table id="customersTable"></table></div></div>
+  </div>
+
+  <div id="subcust-inactive" style="display:none;">
+    <div class="card glass hint-card">超過 <b>60 天</b>未到店消費的顧客會自動列在下方，建議主動關懷或發送回娘家優惠。</div>
+    <div class="card glass"><div class="table-wrap"><table id="inactiveTable"></table></div></div>
+  </div>
+
+  <div id="subcust-cards" style="display:none;">
+    <button class="btn" data-action="open-card-modal">+ 新增儲值/堂數券</button>
+    <div class="card glass" style="margin-top:12px;"><div class="table-wrap"><table id="cardsTable"></table></div></div>
+  </div>
+</section>
+
+<section class="view" id="view-settings">
+  <div class="card glass">
+    <h3>店家設定</h3>
+    <div class="form-grid">
+      <div class="field"><label>店名</label><input type="text" id="setSalonName"></div>
+      <div class="field"><label>本月營業目標（元）</label><input type="number" id="setMonthlyTarget" min="0"></div>
+    </div>
+    <button class="btn" data-action="save-settings">儲存設定</button>
+  </div>
+
+  <div class="card glass">
+    <h3>資料備份</h3>
+    <p class="hint-card" style="padding:0 0 12px;">所有資料只存在本機瀏覽器的 localStorage。強烈建議定期匯出備份，更換裝置或清除瀏覽器資料前務必先匯出。</p>
+    <div class="btn-row">
+      <button class="btn" data-action="export-data">⬇ 匯出備份 (JSON)</button>
+      <button class="btn secondary" data-action="trigger-import">⬆ 匯入備份</button>
+      <input type="file" id="importFileInput" accept="application/json" style="display:none;">
+    </div>
+  </div>
+
+  <div class="card glass">
+    <h3>清除資料</h3>
+    <p class="hint-card" style="padding:0 0 12px;">此操作會清除瀏覽器內所有資料且無法復原，請先匯出備份。</p>
+    <button class="btn danger" data-action="wipe-data">🗑 清除全部資料</button>
+  </div>
+</section>
+
+</main>
+
+<div id="toast" class="toast"></div>
+<div class="modal-overlay" id="modalOverlay"><div class="modal-box glass" id="modalBox"></div></div>
+
+<footer class="app-foot">單機版沙龍管理系統 · 資料儲存於本機瀏覽器 · v1.0</footer>
+
+<script>
+(function(){
+"use strict";
+
+var STORAGE_KEY = "hairSalonHubData_v1";
+var CATEGORIES = ["剪髮","燙髮","染髮","護髮","頭皮養護","其他"];
+var CATEGORY_COLORS = {
+  "剪髮":"#ff6ec7","燙髮":"#a26bff","染髮":"#4dd6ff","護髮":"#3dffb0","頭皮養護":"#ffc95c","其他":"#8a8fb0"
+};
+var ROLES = ["店長","設計師","助理","櫃檯"];
+var ROLE_CLASS = {"店長":"role-manager","設計師":"role-stylist","助理":"role-assistant","櫃檯":"role-front"};
+var WEEKDAY_NAMES = ["日","一","二","三","四","五","六"];
+
+function uid(prefix){ return (prefix||"id")+"_"+Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function nowMonthStr(){ return new Date().toISOString().slice(0,7); }
+function fmtMoney(n){ n = Number(n)||0; return "NT$ " + Math.round(n).toLocaleString("zh-Hant-TW"); }
+function fmtNum(n){ return Number(n||0).toLocaleString("zh-Hant-TW"); }
+function fmtDate(d){ if(!d) return "-"; return d; }
+function daysBetween(a,b){ return Math.floor((b-a)/86400000); }
+function escapeHtml(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+function defaultData(){
+  return {
+    settings:{ salonName:"我的沙龍", monthlyTarget:300000, weeklyClosedDays:[1], closedDates:[] },
+    employees:[],
+    services:[],
+    products:[],
+    customers:[],
+    transactions:[],
+    prepaidCards:[]
+  };
+}
+
+var DB = load();
+function load(){
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultData();
+    var parsed = JSON.parse(raw);
+    var d = defaultData();
+    for(var k in d){ if(parsed[k]!==undefined) d[k]=parsed[k]; }
+    return d;
+  }catch(e){
+    console.error("load error", e);
+    return defaultData();
+  }
+}
+function save(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }
+  catch(e){ toast("儲存失敗：瀏覽器儲存空間可能已滿"); }
+}
+
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+
+function getEmployee(id){ return DB.employees.find(function(e){return e.id===id;}); }
+function getService(id){ return DB.services.find(function(s){return s.id===id;}); }
+function getProduct(id){ return DB.products.find(function(p){return p.id===id;}); }
+function getCustomer(id){ return DB.customers.find(function(c){return c.id===id;}); }
+function getCard(id){ return DB.prepaidCards.find(function(c){return c.id===id;}); }
+
+/* ---------------- Navigation ---------------- */
+var currentView = "dashboard";
+function switchView(view){
+  currentView = view;
+  document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+  document.getElementById("view-"+view).classList.add("active");
+  document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.toggle("active", b.dataset.view===view); });
+  renderAll();
+  window.scrollTo({top:0,behavior:"instant" in window ? "instant":"auto"});
+}
+document.getElementById("tabNav").addEventListener("click", function(e){
+  var btn = e.target.closest(".tab-btn");
+  if(!btn) return;
+  switchView(btn.dataset.view);
+});
+
+document.querySelectorAll(".subtabs").forEach(function(bar){
+  var prefix = bar.dataset.panelPrefix;
+  var subs = Array.prototype.map.call(bar.querySelectorAll(".subtab-btn"), function(b){ return b.dataset.sub; });
+  bar.addEventListener("click", function(e){
+    var btn = e.target.closest(".subtab-btn");
+    if(!btn) return;
+    bar.querySelectorAll(".subtab-btn").forEach(function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    subs.forEach(function(sub){
+      var panel = document.getElementById(prefix + "-" + sub);
+      if(panel) panel.style.display = (sub===btn.dataset.sub) ? "" : "none";
+    });
+  });
+  var first = bar.querySelector(".subtab-btn");
+  if(first) first.classList.add("active");
+});
+
+/* ---------------- Clock ---------------- */
+function tickClock(){
+  var d = new Date();
+  var pad = function(n){ return String(n).padStart(2,"0"); };
+  document.getElementById("clockDisplay").textContent = d.getFullYear()+"/"+pad(d.getMonth()+1)+"/"+pad(d.getDate())+" "+pad(d.getHours())+":"+pad(d.getMinutes());
+}
+tickClock(); setInterval(tickClock, 30000);
+
+/* ---------------- Modal ---------------- */
+function openModal(title, bodyHtml, onOpen){
+  var overlay = document.getElementById("modalOverlay");
+  var box = document.getElementById("modalBox");
+  box.innerHTML =
+    '<div class="modal-head"><h2>'+escapeHtml(title)+'</h2><button class="close-x" data-action="close-modal">✕</button></div>'
+    + bodyHtml;
+  overlay.classList.add("open");
+  if(onOpen) onOpen(box);
+}
+function closeModal(){
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.getElementById("modalBox").innerHTML = "";
+}
+document.getElementById("modalOverlay").addEventListener("click", function(e){
+  if(e.target === this) closeModal();
+});
+
+/* ---------------- Dashboard ---------------- */
+function monthTransactions(monthStr){
+  return DB.transactions.filter(function(t){ return t.date.slice(0,7) === monthStr; });
+}
+function sumRevenue(list){ return list.reduce(function(a,t){ return a + t.revenue; }, 0); }
+
+function renderDashboard(){
+  var today = todayStr();
+  var month = nowMonthStr();
+  var todayTx = DB.transactions.filter(function(t){ return t.date === today; });
+  var monthTx = monthTransactions(month);
+  var todayRevenue = sumRevenue(todayTx);
+  var monthRevenue = sumRevenue(monthTx);
+  var target = DB.settings.monthlyTarget || 0;
+  var pct = target > 0 ? Math.min(100, (monthRevenue/target)*100) : 0;
+
+  var stats = document.getElementById("dashStats");
+  stats.innerHTML = [
+    statCard("今日營業額", fmtMoney(todayRevenue), todayTx.length+" 筆結帳", "var(--neon-pink)"),
+    statCard("本月營業額", fmtMoney(monthRevenue), monthTx.length+" 筆結帳", "var(--neon-purple)"),
+    statCard("目標達成率", (target>0?pct.toFixed(1):"—")+"%", "目標 "+fmtMoney(target), "var(--neon-blue)"),
+    statCard("本月平均客單", fmtMoney(monthTx.length? monthRevenue/monthTx.length : 0), "每筆結帳平均", "var(--neon-green)")
+  ].join("");
+
+  document.getElementById("dashTargetVal").textContent = fmtMoney(target);
+  document.getElementById("dashRevenueVal").textContent = fmtMoney(monthRevenue);
+  document.getElementById("dashTargetBar").style.width = pct+"%";
+  document.getElementById("dashTargetPctLabel").textContent = target>0 ? ("已達成 "+pct.toFixed(1)+"%") : "尚未設定本月目標，請至設定頁面設定";
+
+  renderCategoryDonut(monthTx);
+  renderRanking(monthTx);
+  renderRecent();
+}
+function statCard(label, value, foot, color){
+  return '<div class="glass stat-card"><div class="glow" style="background:'+color+'"></div>'
+    +'<div class="label">'+label+'</div><div class="value">'+value+'</div><div class="foot">'+foot+'</div></div>';
+}
+
+function renderCategoryDonut(monthTx){
+  var totals = {};
+  CATEGORIES.forEach(function(c){ totals[c]=0; });
+  monthTx.forEach(function(t){
+    t.items.forEach(function(it){
+      var cat = totals[it.category]!==undefined ? it.category : "其他";
+      totals[cat] += it.price;
+    });
+  });
+  var grand = Object.values(totals).reduce(function(a,b){return a+b;},0);
+  var el = document.getElementById("dashCategoryDonut");
+  if(grand<=0){
+    el.innerHTML = '<div class="empty-state"><span class="em">✂️</span>本月尚無服務營收資料</div>';
+    return;
+  }
+  var gradientParts = [];
+  var acc = 0;
+  var legendHtml = "";
+  CATEGORIES.forEach(function(cat){
+    var val = totals[cat];
+    if(val<=0) return;
+    var pct = (val/grand)*100;
+    var start = acc, end = acc + pct;
+    gradientParts.push(CATEGORY_COLORS[cat]+" "+start.toFixed(2)+"% "+end.toFixed(2)+"%");
+    acc = end;
+    legendHtml += '<div class="legend-row"><span class="legend-dot" style="background:'+CATEGORY_COLORS[cat]+'"></span>'
+      +'<span class="legend-name">'+cat+'</span><span class="legend-pct">'+pct.toFixed(1)+'%</span></div>';
+  });
+  el.innerHTML = '<div class="donut-wrap">'
+    +'<div class="donut" style="background:conic-gradient('+gradientParts.join(",")+')"><div class="donut-center">總計<br>'+fmtMoney(grand)+'</div></div>'
+    +'<div class="legend-list">'+legendHtml+'</div></div>';
+}
+
+function renderRanking(monthTx){
+  var totals = {};
+  monthTx.forEach(function(t){
+    totals[t.employeeId] = (totals[t.employeeId]||0) + t.revenue;
+  });
+  var rows = Object.keys(totals).map(function(id){
+    var emp = getEmployee(id);
+    return { id:id, name: emp?emp.name:"（已刪除員工）", revenue: totals[id] };
+  }).sort(function(a,b){ return b.revenue - a.revenue; });
+  var el = document.getElementById("dashRanking");
+  if(rows.length===0){ el.innerHTML='<div class="empty-state"><span class="em">🏆</span>本月尚無業績資料</div>'; return; }
+  var max = rows[0].revenue || 1;
+  el.innerHTML = rows.slice(0,10).map(function(r, i){
+    var rankClass = i===0?"n1":i===1?"n2":i===2?"n3":"";
+    return '<div class="rank-row"><div class="rank-num '+rankClass+'">'+(i+1)+'</div>'
+      +'<div class="rank-body"><div class="rank-name"><span>'+escapeHtml(r.name)+'</span><span class="rank-amt">'+fmtMoney(r.revenue)+'</span></div>'
+      +'<div class="rank-bar-outer"><div class="rank-bar-inner" style="width:'+((r.revenue/max)*100).toFixed(1)+'%"></div></div></div></div>';
+  }).join("");
+}
+
+function renderRecent(){
+  var list = DB.transactions.slice().sort(function(a,b){ return (b.date+b.time).localeCompare(a.date+a.time); }).slice(0,8);
+  var el = document.getElementById("dashRecent");
+  if(list.length===0){ el.innerHTML='<div class="empty-state"><span class="em">🧾</span>尚無結帳紀錄</div>'; return; }
+  el.innerHTML = list.map(function(t){
+    var emp = getEmployee(t.employeeId);
+    var cust = t.customerId ? getCustomer(t.customerId) : null;
+    var serviceNames = t.items.map(function(i){return i.name;}).join("、");
+    return '<div class="rank-row"><div class="rank-body">'
+      +'<div class="rank-name"><span>'+escapeHtml(emp?emp.name:"—")+' · '+escapeHtml(cust?cust.name:"未指定顧客")+'</span><span class="rank-amt">'+fmtMoney(t.revenue)+'</span></div>'
+      +'<div class="meta" style="font-size:11.5px;color:var(--text-3);margin-top:3px;">'+t.date+' · '+escapeHtml(serviceNames||"—")+'</div>'
+      +'</div></div>';
+  }).join("");
+}
+
+/* ---------------- Checkout / Commission ---------------- */
+var checkoutState = { items:[], products:[] };
+
+function refreshCheckoutSelects(){
+  var empSel = document.getElementById("coEmployee");
+  empSel.innerHTML = DB.employees.filter(function(e){return e.active!==false;}).map(function(e){
+    return '<option value="'+e.id+'">'+escapeHtml(e.name)+'（抽成 '+e.commissionRate+'%）</option>';
+  }).join("") || '<option value="">請先至員工管理新增員工</option>';
+
+  var custSel = document.getElementById("coCustomer");
+  custSel.innerHTML = '<option value="">-- 不指定 --</option>' + DB.customers.map(function(c){
+    return '<option value="'+c.id+'">'+escapeHtml(c.name)+'（'+escapeHtml(c.phone||"")+'）</option>';
+  }).join("");
+
+  var svcSel = document.getElementById("coAddServiceSelect");
+  svcSel.innerHTML = '<option value="">-- 選擇服務項目 --</option>' + DB.services.map(function(s){
+    return '<option value="'+s.id+'">'+escapeHtml(s.name)+'（'+s.category+' / '+fmtMoney(s.price)+'）</option>';
+  }).join("");
+
+  var prodSel = document.getElementById("coAddProductSelect");
+  prodSel.innerHTML = '<option value="">-- 選擇商品 --</option>' + DB.products.map(function(p){
+    return '<option value="'+p.id+'">'+escapeHtml(p.name)+'（庫存 '+p.stock+'）</option>';
+  }).join("");
+
+  refreshPrepaidCardSelect();
+}
+function refreshPrepaidCardSelect(){
+  var custId = document.getElementById("coCustomer").value;
+  var sel = document.getElementById("coPrepaidCard");
+  var cards = DB.prepaidCards.filter(function(c){ return c.remaining>0 && (!custId || c.customerId===custId); });
+  sel.innerHTML = cards.map(function(c){
+    var cust = getCustomer(c.customerId);
+    var remainTxt = c.type==="balance" ? fmtMoney(c.remaining) : (c.remaining+" 堂");
+    return '<option value="'+c.id+'">'+escapeHtml(cust?cust.name:"—")+' · '+escapeHtml(c.title)+'（剩 '+remainTxt+'）</option>';
+  }).join("") || '<option value="">此顧客無可用票券</option>';
+  updatePrepaidCardInfo();
+}
+function updatePrepaidCardInfo(){
+  var id = document.getElementById("coPrepaidCard").value;
+  var info = document.getElementById("coPrepaidCardInfo");
+  var card = getCard(id);
+  if(!card){ info.textContent=""; return; }
+  info.textContent = card.type==="balance" ? ("目前餘額：" + fmtMoney(card.remaining)) : ("目前剩餘堂數：" + card.remaining + " 堂");
+}
+
+document.getElementById("coCustomer").addEventListener("change", refreshPrepaidCardSelect);
+document.getElementById("coPrepaidCard").addEventListener("change", updatePrepaidCardInfo);
+document.getElementById("coPayMethod").addEventListener("change", function(){
+  document.getElementById("coPrepaidWrap").style.display = this.value==="prepaid" ? "" : "none";
+  renderCheckoutSummary();
+});
+
+function renderCheckoutItems(){
+  var svcEl = document.getElementById("coServiceList");
+  if(checkoutState.items.length===0){
+    svcEl.innerHTML = '<div class="empty-state" style="padding:16px;"><span class="em">✂️</span>尚未加入服務項目</div>';
+  } else {
+    svcEl.innerHTML = checkoutState.items.map(function(it, idx){
+      return '<div class="item-row"><div class="grow"><div class="name">'+escapeHtml(it.name)+'</div><div class="meta">'+it.category+'</div></div>'
+        +'<div><small>售價</small><br><input class="num" type="number" min="0" data-idx="'+idx+'" data-field="price" value="'+it.price+'"></div>'
+        +'<div><small>材料成本</small><br><input class="num" type="number" min="0" data-idx="'+idx+'" data-field="materialCost" value="'+it.materialCost+'"></div>'
+        +'<button class="icon-btn danger" data-action="co-remove-service" data-idx="'+idx+'">✕</button></div>';
+    }).join("");
+  }
+
+  var prodEl = document.getElementById("coProductList");
+  if(checkoutState.products.length===0){
+    prodEl.innerHTML = '<div class="empty-state" style="padding:16px;"><span class="em">🧴</span>尚未加入商品</div>';
+  } else {
+    prodEl.innerHTML = checkoutState.products.map(function(it, idx){
+      return '<div class="item-row"><div class="grow"><div class="name">'+escapeHtml(it.name)+'</div><div class="meta">單價 '+fmtMoney(it.price)+'</div></div>'
+        +'<div><small>數量</small><br><input class="num" type="number" min="1" data-idx="'+idx+'" data-field="qty" value="'+it.qty+'"></div>'
+        +'<button class="icon-btn danger" data-action="co-remove-product" data-idx="'+idx+'">✕</button></div>';
+    }).join("");
+  }
+  renderCheckoutSummary();
+}
+
+function renderCheckoutSummary(){
+  var empId = document.getElementById("coEmployee").value;
+  var emp = getEmployee(empId);
+  var serviceRevenue = checkoutState.items.reduce(function(a,i){return a+Number(i.price||0);},0);
+  var materialCost = checkoutState.items.reduce(function(a,i){return a+Number(i.materialCost||0);},0);
+  var productRevenue = checkoutState.products.reduce(function(a,i){return a+Number(i.price||0)*Number(i.qty||1);},0);
+  var revenue = serviceRevenue + productRevenue;
+  var commissionBase = Math.max(0, serviceRevenue - materialCost);
+  var rate = emp ? emp.commissionRate : 0;
+  var commission = commissionBase * (rate/100);
+  var el = document.getElementById("coSummary");
+  el.innerHTML =
+    '<div class="row"><span>服務營收</span><b>'+fmtMoney(serviceRevenue)+'</b></div>'
+    +'<div class="row"><span>商品營收</span><b>'+fmtMoney(productRevenue)+'</b></div>'
+    +'<div class="row"><span>材料成本</span><b>- '+fmtMoney(materialCost)+'</b></div>'
+    +'<div class="row"><span>抽成比例</span><b>'+rate+'%</b></div>'
+    +'<div class="row commission"><span>預估抽成金額</span><b>'+fmtMoney(commission)+'</b></div>'
+    +'<div class="row total"><span>本筆總收款</span><span>'+fmtMoney(revenue)+'</span></div>';
+  checkoutState._computed = {serviceRevenue:serviceRevenue, productRevenue:productRevenue, materialCost:materialCost, revenue:revenue, commissionBase:commissionBase, commission:commission};
+}
+document.getElementById("coEmployee").addEventListener("change", renderCheckoutSummary);
+
+function resetCheckoutForm(){
+  checkoutState = { items:[], products:[] };
+  document.getElementById("coDate").value = todayStr();
+  document.getElementById("coNote").value = "";
+  document.getElementById("coPayMethod").value = "cash";
+  document.getElementById("coPrepaidWrap").style.display = "none";
+  refreshCheckoutSelects();
+  renderCheckoutItems();
+}
+
+/* ---------------- Records ---------------- */
+function refreshRecordFilters(){
+  var sel = document.getElementById("recFilterEmployee");
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">全部人員</option>' + DB.employees.map(function(e){
+    return '<option value="'+e.id+'">'+escapeHtml(e.name)+'</option>';
+  }).join("");
+  sel.value = cur;
+}
+function renderRecords(){
+  var dateFilter = document.getElementById("recFilterDate").value;
+  var empFilter = document.getElementById("recFilterEmployee").value;
+  var list = DB.transactions.filter(function(t){
+    if(dateFilter && t.date!==dateFilter) return false;
+    if(empFilter && t.employeeId!==empFilter) return false;
+    return true;
+  }).sort(function(a,b){ return (b.date+b.time).localeCompare(a.date+a.time); });
+
+  var table = document.getElementById("recordsTable");
+  if(list.length===0){
+    table.innerHTML = '<tr><td><div class="empty-state"><span class="em">🧾</span>沒有符合條件的結帳紀錄</div></td></tr>';
+    return;
+  }
+  table.innerHTML = '<tr><th>日期</th><th>人員</th><th>顧客</th><th>服務</th><th>營收</th><th>抽成</th><th>付款</th><th></th></tr>'
+    + list.map(function(t){
+      var emp = getEmployee(t.employeeId);
+      var cust = t.customerId ? getCustomer(t.customerId) : null;
+      return '<tr><td>'+t.date+'</td><td>'+escapeHtml(emp?emp.name:"—")+'</td><td>'+escapeHtml(cust?cust.name:"—")+'</td>'
+        +'<td>'+escapeHtml(t.items.map(function(i){return i.name;}).join("、")||"—")+'</td>'
+        +'<td>'+fmtMoney(t.revenue)+'</td><td style="color:var(--neon-green);font-weight:700;">'+fmtMoney(t.commission)+'</td>'
+        +'<td>'+(t.paymentMethod==="prepaid"?"票券扣抵":"現金")+'</td>'
+        +'<td><button class="icon-btn danger" data-action="delete-transaction" data-id="'+t.id+'">✕</button></td></tr>';
+    }).join("");
+}
+document.getElementById("recFilterDate").addEventListener("change", renderRecords);
+document.getElementById("recFilterEmployee").addEventListener("change", renderRecords);
+
+/* ---------------- Settlement ---------------- */
+function renderSettle(){
+  var monthInput = document.getElementById("settleMonth");
+  if(!monthInput.value) monthInput.value = nowMonthStr();
+}
+function generateSettlement(){
+  var month = document.getElementById("settleMonth").value || nowMonthStr();
+  var tx = monthTransactions(month);
+  var byEmp = {};
+  DB.employees.forEach(function(e){ byEmp[e.id] = { emp:e, count:0, revenue:0, materialCost:0, commission:0 }; });
+  tx.forEach(function(t){
+    if(!byEmp[t.employeeId]) return;
+    var row = byEmp[t.employeeId];
+    row.count += 1;
+    row.revenue += t.revenue;
+    row.materialCost += t.materialCost;
+    row.commission += t.commission;
+  });
+  var rows = Object.values(byEmp).sort(function(a,b){ return b.commission - a.commission; });
+  var totalRevenue = rows.reduce(function(a,r){return a+r.revenue;},0);
+  var totalCommission = rows.reduce(function(a,r){return a+r.commission;},0);
+
+  var el = document.getElementById("settleResult");
+  var body = rows.map(function(r){
+    return '<tr><td>'+escapeHtml(r.emp.name)+'</td><td><span class="badge '+ (ROLE_CLASS[r.emp.role]||"") +'">'+r.emp.role+'</span></td>'
+      +'<td>'+r.count+'</td><td>'+fmtMoney(r.revenue)+'</td><td>'+fmtMoney(r.materialCost)+'</td>'
+      +'<td>'+r.emp.commissionRate+'%</td><td style="color:var(--neon-green);font-weight:800;">'+fmtMoney(r.commission)+'</td></tr>';
+  }).join("");
+  el.innerHTML = '<div class="table-wrap"><table>'
+    +'<tr><th>員工</th><th>角色</th><th>結帳筆數</th><th>營收</th><th>材料成本</th><th>抽成%</th><th>應發抽成</th></tr>'
+    + (body || '<tr><td colspan="7"><div class="empty-state">本月尚無資料</div></td></tr>')
+    +'</table></div>'
+    +'<div class="summary-box"><div class="row total"><span>本月總營收</span><span>'+fmtMoney(totalRevenue)+'</span></div>'
+    +'<div class="row commission"><span>本月應發抽成總額</span><b>'+fmtMoney(totalCommission)+'</b></div></div>'
+    +'<div class="btn-row"><button class="btn secondary sm" data-action="export-settlement" data-month="'+month+'">⬇ 匯出本月結算表 CSV</button></div>';
+  generateSettlement._rows = rows;
+  generateSettlement._month = month;
+}
+function exportSettlementCsv(month){
+  var rows = generateSettlement._rows || [];
+  var lines = ["員工,角色,結帳筆數,營收,材料成本,抽成比例(%),應發抽成"];
+  rows.forEach(function(r){
+    lines.push([r.emp.name, r.emp.role, r.count, Math.round(r.revenue), Math.round(r.materialCost), r.emp.commissionRate, Math.round(r.commission)].join(","));
+  });
+  downloadFile(month+"_月結表.csv", "﻿"+lines.join("\n"), "text/csv;charset=utf-8");
+}
+
+/* ---------------- Services & Products ---------------- */
+function renderServices(){
+  var el = document.getElementById("servicesTable");
+  if(DB.services.length===0){ el.innerHTML='<tr><td><div class="empty-state"><span class="em">✂️</span>尚未新增服務項目<br><button class="btn sm" style="margin-top:10px;" data-action="open-service-modal">+ 新增服務項目</button></div></td></tr>'; return; }
+  el.innerHTML = '<tr><th>名稱</th><th>類別</th><th>定價</th><th>時數</th><th>材料成本</th><th></th></tr>'
+    + DB.services.map(function(s){
+      return '<tr><td>'+escapeHtml(s.name)+'</td><td>'+s.category+'</td><td>'+fmtMoney(s.price)+'</td><td>'+s.duration+' 分</td><td>'+fmtMoney(s.materialCost)+'</td>'
+        +'<td><button class="icon-btn" data-action="edit-service" data-id="'+s.id+'">✎</button> <button class="icon-btn danger" data-action="delete-service" data-id="'+s.id+'">✕</button></td></tr>';
+    }).join("");
+}
+function renderProducts(){
+  var el = document.getElementById("productsTable");
+  if(DB.products.length===0){ el.innerHTML='<tr><td><div class="empty-state"><span class="em">🧴</span>尚未新增商品<br><button class="btn sm" style="margin-top:10px;" data-action="open-product-modal">+ 新增商品</button></div></td></tr>'; return; }
+  el.innerHTML = '<tr><th>名稱</th><th>庫存</th><th>低庫存警示值</th><th>狀態</th><th></th></tr>'
+    + DB.products.map(function(p){
+      var low = p.stock <= p.lowStockThreshold;
+      return '<tr><td>'+escapeHtml(p.name)+'</td><td>'+p.stock+'</td><td>'+p.lowStockThreshold+'</td>'
+        +'<td><span class="badge '+(low?"low":"ok")+'">'+(low?"⚠ 低庫存":"庫存正常")+'</span></td>'
+        +'<td><button class="icon-btn" data-action="edit-product" data-id="'+p.id+'">✎</button> <button class="icon-btn danger" data-action="delete-product" data-id="'+p.id+'">✕</button></td></tr>';
+    }).join("");
+}
+
+function serviceModalHtml(s){
+  s = s || {name:"",category:CATEGORIES[0],price:0,duration:30,materialCost:0};
+  return '<div class="field"><label>服務名稱</label><input id="mSvcName" value="'+escapeHtml(s.name)+'"></div>'
+    +'<div class="form-grid">'
+    +'<div class="field"><label>類別</label><select id="mSvcCategory">'+CATEGORIES.map(function(c){return '<option value="'+c+'" '+(c===s.category?"selected":"")+'>'+c+'</option>';}).join("")+'</select></div>'
+    +'<div class="field"><label>定價（元）</label><input type="number" min="0" id="mSvcPrice" value="'+s.price+'"></div>'
+    +'<div class="field"><label>預估服務時數（分鐘）</label><input type="number" min="0" id="mSvcDuration" value="'+s.duration+'"></div>'
+    +'<div class="field"><label>材料成本（固定扣除，元）</label><input type="number" min="0" id="mSvcMaterialCost" value="'+s.materialCost+'"></div>'
+    +'</div><button class="btn block" data-action="save-service" data-id="'+(s.id||"")+'">儲存</button>';
+}
+function productModalHtml(p){
+  p = p || {name:"",stock:0,lowStockThreshold:3};
+  return '<div class="field"><label>商品名稱</label><input id="mProdName" value="'+escapeHtml(p.name)+'"></div>'
+    +'<div class="form-grid">'
+    +'<div class="field"><label>目前庫存數量</label><input type="number" min="0" id="mProdStock" value="'+p.stock+'"></div>'
+    +'<div class="field"><label>低庫存提醒門檻</label><input type="number" min="0" id="mProdThreshold" value="'+p.lowStockThreshold+'"></div>'
+    +'</div><button class="btn block" data-action="save-product" data-id="'+(p.id||"")+'">儲存</button>';
+}
+
+/* ---------------- Employees ---------------- */
+function renderEmployees(){
+  var el = document.getElementById("employeesTable");
+  if(DB.employees.length===0){ el.innerHTML='<tr><td><div class="empty-state"><span class="em">👤</span>尚未新增員工<br><button class="btn sm" style="margin-top:10px;" data-action="open-employee-modal">+ 新增員工</button></div></td></tr>'; return; }
+  el.innerHTML = '<tr><th>姓名</th><th>電話</th><th>角色</th><th>到職日</th><th>抽成比例</th><th>狀態</th><th></th></tr>'
+    + DB.employees.map(function(e){
+      return '<tr><td>'+escapeHtml(e.name)+'</td><td>'+escapeHtml(e.phone||"-")+'</td>'
+        +'<td><span class="badge '+(ROLE_CLASS[e.role]||"")+'">'+e.role+'</span></td>'
+        +'<td>'+(e.hireDate||"-")+'</td><td>'+e.commissionRate+'%</td>'
+        +'<td>'+(e.active!==false?'<span class="badge ok">在職</span>':'<span class="badge low">停用</span>')+'</td>'
+        +'<td><button class="icon-btn" data-action="edit-employee" data-id="'+e.id+'">✎</button> <button class="icon-btn danger" data-action="delete-employee" data-id="'+e.id+'">✕</button></td></tr>';
+    }).join("");
+}
+function employeeModalHtml(e){
+  e = e || {name:"",phone:"",role:ROLES[1],hireDate:todayStr(),commissionRate:40,active:true,weeklyWorkDays:[0,1,2,3,4,5,6]};
+  return '<div class="form-grid">'
+    +'<div class="field"><label>姓名</label><input id="mEmpName" value="'+escapeHtml(e.name)+'"></div>'
+    +'<div class="field"><label>電話</label><input id="mEmpPhone" value="'+escapeHtml(e.phone||"")+'"></div>'
+    +'<div class="field"><label>角色</label><select id="mEmpRole">'+ROLES.map(function(r){return '<option value="'+r+'" '+(r===e.role?"selected":"")+'>'+r+'</option>';}).join("")+'</select></div>'
+    +'<div class="field"><label>到職日</label><input type="date" id="mEmpHireDate" value="'+(e.hireDate||"")+'"></div>'
+    +'<div class="field"><label>抽成比例（%）</label><input type="number" min="0" max="100" id="mEmpRate" value="'+e.commissionRate+'"></div>'
+    +'<div class="field"><label>狀態</label><select id="mEmpActive"><option value="1" '+(e.active!==false?"selected":"")+'>在職</option><option value="0" '+(e.active===false?"selected":"")+'>停用</option></select></div>'
+    +'</div><button class="btn block" data-action="save-employee" data-id="'+(e.id||"")+'">儲存</button>';
+}
+
+/* ---------------- Schedule ---------------- */
+function renderSchedule(){
+  var wPicker = document.getElementById("weeklyClosedPicker");
+  wPicker.innerHTML = WEEKDAY_NAMES.map(function(name, idx){
+    var on = DB.settings.weeklyClosedDays.indexOf(idx) !== -1;
+    return '<div class="weekday-chip '+(on?"on":"")+'" data-action="toggle-weekly-closed" data-day="'+idx+'">週'+name+'</div>';
+  }).join("");
+
+  var datesList = document.getElementById("closedDatesList");
+  var dates = DB.settings.closedDates.slice().sort();
+  datesList.innerHTML = dates.length===0 ? '<div class="empty-state" style="padding:14px;">尚未設定特定公休日</div>'
+    : dates.map(function(d){
+      return '<div class="rank-row"><div class="rank-body"><div class="rank-name"><span>'+d+'</span>'
+        +'<button class="icon-btn danger" data-action="remove-closed-date" data-date="'+d+'">✕</button></div></div></div>';
+    }).join("");
+
+  var staffList = document.getElementById("staffScheduleList");
+  if(DB.employees.length===0){ staffList.innerHTML='<div class="empty-state">尚無員工資料</div>'; return; }
+  staffList.innerHTML = DB.employees.map(function(e){
+    var days = e.weeklyWorkDays || [0,1,2,3,4,5,6];
+    return '<div style="margin-bottom:16px;"><div style="font-weight:700;font-size:13.5px;margin-bottom:8px;">'+escapeHtml(e.name)+'</div>'
+      +'<div class="weekday-picker">' + WEEKDAY_NAMES.map(function(name, idx){
+        var on = days.indexOf(idx) !== -1;
+        return '<div class="weekday-chip '+(on?"on":"")+'" data-action="toggle-emp-workday" data-emp="'+e.id+'" data-day="'+idx+'">週'+name+'</div>';
+      }).join("") + '</div></div>';
+  }).join("");
+}
+
+/* ---------------- Customers ---------------- */
+function customerTransactions(custId){
+  return DB.transactions.filter(function(t){ return t.customerId===custId; }).sort(function(a,b){return b.date.localeCompare(a.date);});
+}
+function lastVisitDate(custId){
+  var tx = customerTransactions(custId);
+  return tx.length ? tx[0].date : null;
+}
+function renderCustomers(){
+  var q = (document.getElementById("custSearch").value||"").trim().toLowerCase();
+  var el = document.getElementById("customersTable");
+  var list = DB.customers.filter(function(c){
+    if(!q) return true;
+    return (c.name||"").toLowerCase().indexOf(q)!==-1 || (c.phone||"").indexOf(q)!==-1;
+  });
+  if(list.length===0){ el.innerHTML='<tr><td><div class="empty-state"><span class="em">👤</span>沒有顧客資料<br><button class="btn sm" style="margin-top:10px;" data-action="open-customer-modal">+ 新增顧客</button></div></td></tr>'; return; }
+  el.innerHTML = '<tr><th>姓名</th><th>電話</th><th>最近到店</th><th>消費次數</th><th>累計消費</th><th></th></tr>'
+    + list.map(function(c){
+      var tx = customerTransactions(c.id);
+      var total = sumRevenue(tx);
+      var lv = lastVisitDate(c.id);
+      return '<tr><td>'+escapeHtml(c.name)+'</td><td>'+escapeHtml(c.phone||"-")+'</td><td>'+(lv||"尚無紀錄")+'</td>'
+        +'<td>'+tx.length+'</td><td>'+fmtMoney(total)+'</td>'
+        +'<td><button class="icon-btn" data-action="view-customer" data-id="'+c.id+'">👁</button> <button class="icon-btn" data-action="edit-customer" data-id="'+c.id+'">✎</button> <button class="icon-btn danger" data-action="delete-customer" data-id="'+c.id+'">✕</button></td></tr>';
+    }).join("");
+}
+function customerModalHtml(c){
+  c = c || {name:"",phone:"",note:""};
+  return '<div class="form-grid">'
+    +'<div class="field"><label>姓名</label><input id="mCustName" value="'+escapeHtml(c.name)+'"></div>'
+    +'<div class="field"><label>電話</label><input id="mCustPhone" value="'+escapeHtml(c.phone||"")+'"></div>'
+    +'</div><div class="field"><label>備註</label><textarea id="mCustNote" rows="3">'+escapeHtml(c.note||"")+'</textarea></div>'
+    +'<button class="btn block" data-action="save-customer" data-id="'+(c.id||"")+'">儲存</button>';
+}
+function customerDetailHtml(c){
+  var tx = customerTransactions(c.id);
+  var cards = DB.prepaidCards.filter(function(cd){return cd.customerId===c.id;});
+  var txHtml = tx.length===0 ? '<div class="empty-state" style="padding:14px;">尚無消費紀錄</div>' : tx.map(function(t){
+    var emp = getEmployee(t.employeeId);
+    return '<div class="pill-line"><span>'+t.date+' · '+escapeHtml(t.items.map(function(i){return i.name;}).join("、"))+' ('+escapeHtml(emp?emp.name:"-")+')</span><b>'+fmtMoney(t.revenue)+'</b></div>';
+  }).join("");
+  var cardHtml = cards.length===0 ? '<div class="empty-state" style="padding:14px;">尚無票券</div>' : cards.map(function(cd){
+    var remainTxt = cd.type==="balance" ? fmtMoney(cd.remaining) : (cd.remaining+" 堂");
+    return '<div class="pill-line"><span>'+escapeHtml(cd.title)+'</span><b>剩 '+remainTxt+'</b></div>';
+  }).join("");
+  return '<div class="field"><label>電話</label><div>'+escapeHtml(c.phone||"-")+'</div></div>'
+    +'<div class="field"><label>備註</label><div>'+escapeHtml(c.note||"-")+'</div></div>'
+    +'<div class="section-title" style="margin-top:10px;">消費紀錄</div>'+txHtml
+    +'<div class="section-title">持有票券</div>'+cardHtml;
+}
+
+function renderInactive(){
+  var el = document.getElementById("inactiveTable");
+  var today = new Date();
+  var rows = DB.customers.map(function(c){
+    var lv = lastVisitDate(c.id);
+    var refDate = lv ? new Date(lv) : (c.createdDate ? new Date(c.createdDate) : null);
+    var d = refDate ? daysBetween(refDate, today) : null;
+    return { c:c, lastVisit: lv, days: d };
+  }).filter(function(r){ return r.days!==null && r.days > 60; }).sort(function(a,b){ return b.days - a.days; });
+
+  if(rows.length===0){ el.innerHTML = '<tr><td><div class="empty-state"><span class="em">🎉</span>目前沒有超過 60 天未到店的顧客</div></td></tr>'; return; }
+  el.innerHTML = '<tr><th>姓名</th><th>電話</th><th>最近到店</th><th>未到店天數</th></tr>'
+    + rows.map(function(r){
+      return '<tr><td>'+escapeHtml(r.c.name)+'</td><td>'+escapeHtml(r.c.phone||"-")+'</td><td>'+(r.lastVisit||"從未消費")+'</td>'
+        +'<td><span class="badge warn60">'+r.days+' 天</span></td></tr>';
+    }).join("");
+}
+
+/* ---------------- Prepaid Cards ---------------- */
+function renderCards(){
+  var el = document.getElementById("cardsTable");
+  if(DB.prepaidCards.length===0){ el.innerHTML='<tr><td><div class="empty-state"><span class="em">🎫</span>尚未建立儲值/堂數券<br><button class="btn sm" style="margin-top:10px;" data-action="open-card-modal">+ 新增</button></div></td></tr>'; return; }
+  el.innerHTML = '<tr><th>顧客</th><th>票券</th><th>類型</th><th>剩餘</th><th>建立日</th><th></th></tr>'
+    + DB.prepaidCards.slice().sort(function(a,b){return b.createdDate.localeCompare(a.createdDate);}).map(function(c){
+      var cust = getCustomer(c.customerId);
+      var remainTxt = c.type==="balance" ? fmtMoney(c.remaining) : (c.remaining+" 堂 / 共 "+c.totalValue+" 堂");
+      return '<tr><td>'+escapeHtml(cust?cust.name:"（已刪除）")+'</td><td>'+escapeHtml(c.title)+'</td>'
+        +'<td>'+(c.type==="balance"?"儲值金":"堂數券")+'</td><td>'+remainTxt+'</td><td>'+c.createdDate+'</td>'
+        +'<td><button class="icon-btn" data-action="view-card" data-id="'+c.id+'">👁</button> <button class="icon-btn danger" data-action="delete-card" data-id="'+c.id+'">✕</button></td></tr>';
+    }).join("");
+}
+function cardModalHtml(){
+  return '<div class="form-grid">'
+    +'<div class="field"><label>顧客</label><select id="mCardCustomer">'+DB.customers.map(function(c){return '<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>';}).join("")+'</select></div>'
+    +'<div class="field"><label>票券名稱</label><input id="mCardTitle" placeholder="例如：儲值 5000 元 / 十堂護髮券"></div>'
+    +'<div class="field"><label>類型</label><select id="mCardType"><option value="balance">儲值金（金額制）</option><option value="sessions">堂數券（次數制）</option></select></div>'
+    +'<div class="field"><label>總金額 / 總堂數</label><input type="number" min="0" id="mCardValue" value="0"></div>'
+    +'</div><div class="field"><label>備註</label><input id="mCardNote"></div>'
+    +'<button class="btn block" data-action="save-card">建立票券</button>';
+}
+function cardDetailHtml(c){
+  var cust = getCustomer(c.customerId);
+  var remainTxt = c.type==="balance" ? fmtMoney(c.remaining) : (c.remaining+" 堂");
+  var logHtml = (c.usageLog||[]).slice().reverse().map(function(l){
+    var amtTxt = c.type==="balance" ? fmtMoney(l.amount) : (l.amount+" 堂");
+    return '<div class="pill-line"><span>'+l.date+' '+escapeHtml(l.note||"")+'</span><b>- '+amtTxt+'</b></div>';
+  }).join("") || '<div class="empty-state" style="padding:14px;">尚無扣抵紀錄</div>';
+  return '<div class="pill-line"><span>顧客</span><b>'+escapeHtml(cust?cust.name:"-")+'</b></div>'
+    +'<div class="pill-line"><span>票券</span><b>'+escapeHtml(c.title)+'</b></div>'
+    +'<div class="pill-line"><span>目前剩餘</span><b style="color:var(--neon-green)">'+remainTxt+'</b></div>'
+    +'<div class="section-title">手動扣抵</div>'
+    +'<div class="form-grid"><div class="field"><label>扣抵'+(c.type==="balance"?"金額":"堂數")+'</label><input type="number" min="0" id="mCardDeduct" value="0"></div>'
+    +'<div class="field"><label>備註</label><input id="mCardDeductNote"></div></div>'
+    +'<button class="btn secondary block" data-action="manual-deduct-card" data-id="'+c.id+'">確認扣抵</button>'
+    +'<div class="section-title">扣抵紀錄</div>'+logHtml;
+}
+
+/* ---------------- Settings ---------------- */
+function renderSettings(){
+  document.getElementById("setSalonName").value = DB.settings.salonName;
+  document.getElementById("setMonthlyTarget").value = DB.settings.monthlyTarget;
+}
+function downloadFile(filename, content, mime){
+  var blob = new Blob([content], {type:mime||"application/json"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+
+/* ---------------- Central render ---------------- */
+function renderAll(){
+  document.getElementById("salonNameDisplay").textContent = DB.settings.salonName || "髮沙龍後台";
+  if(currentView==="dashboard") renderDashboard();
+  if(currentView==="commission"){
+    refreshCheckoutSelects();
+    refreshRecordFilters();
+    renderCheckoutItems();
+    renderRecords();
+    renderSettle();
+  }
+  if(currentView==="menu"){ renderServices(); renderProducts(); }
+  if(currentView==="staff"){ renderEmployees(); renderSchedule(); }
+  if(currentView==="customers"){ renderCustomers(); renderInactive(); renderCards(); }
+  if(currentView==="settings"){ renderSettings(); }
+}
+
+/* ---------------- Global click delegation ---------------- */
+document.addEventListener("click", function(e){
+  var btn = e.target.closest("[data-action]");
+  if(!btn) return;
+  var action = btn.dataset.action;
+
+  switch(action){
+    case "close-modal": closeModal(); break;
+
+    case "co-add-service": {
+      var svcId = document.getElementById("coAddServiceSelect").value;
+      var s = getService(svcId);
+      if(!s){ toast("請選擇服務項目"); break; }
+      checkoutState.items.push({serviceId:s.id, name:s.name, category:s.category, price:s.price, materialCost:s.materialCost});
+      renderCheckoutItems();
+      break;
+    }
+    case "co-remove-service": {
+      checkoutState.items.splice(Number(btn.dataset.idx),1);
+      renderCheckoutItems();
+      break;
+    }
+    case "co-add-product": {
+      var prodId = document.getElementById("coAddProductSelect").value;
+      var p = getProduct(prodId);
+      if(!p){ toast("請選擇商品"); break; }
+      if(p.stock<=0){ toast("此商品庫存不足"); break; }
+      checkoutState.products.push({productId:p.id, name:p.name, price: p.price || 0, qty:1});
+      renderCheckoutItems();
+      break;
+    }
+    case "co-remove-product": {
+      checkoutState.products.splice(Number(btn.dataset.idx),1);
+      renderCheckoutItems();
+      break;
+    }
+    case "co-submit": submitCheckout(); break;
+
+    case "delete-transaction": {
+      if(!confirm("確定要刪除這筆結帳紀錄嗎？此動作無法復原。")) break;
+      var id = btn.dataset.id;
+      DB.transactions = DB.transactions.filter(function(t){return t.id!==id;});
+      save(); renderRecords(); toast("已刪除結帳紀錄");
+      break;
+    }
+
+    case "settle-generate": generateSettlement(); break;
+    case "export-settlement": exportSettlementCsv(btn.dataset.month); break;
+
+    case "open-service-modal": openModal("新增服務項目", serviceModalHtml()); break;
+    case "edit-service": openModal("編輯服務項目", serviceModalHtml(getService(btn.dataset.id))); break;
+    case "save-service": saveServiceForm(btn.dataset.id); break;
+    case "delete-service": {
+      if(!confirm("確定要刪除此服務項目嗎？")) break;
+      DB.services = DB.services.filter(function(s){return s.id!==btn.dataset.id;});
+      save(); renderServices(); toast("已刪除");
+      break;
+    }
+
+    case "open-product-modal": openModal("新增商品", productModalHtml()); break;
+    case "edit-product": openModal("編輯商品", productModalHtml(getProduct(btn.dataset.id))); break;
+    case "save-product": saveProductForm(btn.dataset.id); break;
+    case "delete-product": {
+      if(!confirm("確定要刪除此商品嗎？")) break;
+      DB.products = DB.products.filter(function(p){return p.id!==btn.dataset.id;});
+      save(); renderProducts(); toast("已刪除");
+      break;
+    }
+
+    case "open-employee-modal": openModal("新增員工", employeeModalHtml()); break;
+    case "edit-employee": openModal("編輯員工", employeeModalHtml(getEmployee(btn.dataset.id))); break;
+    case "save-employee": saveEmployeeForm(btn.dataset.id); break;
+    case "delete-employee": {
+      if(!confirm("確定要刪除此員工嗎？歷史結帳紀錄仍會保留。")) break;
+      DB.employees = DB.employees.filter(function(e){return e.id!==btn.dataset.id;});
+      save(); renderEmployees(); toast("已刪除");
+      break;
+    }
+
+    case "toggle-weekly-closed": {
+      var day = Number(btn.dataset.day);
+      var arr = DB.settings.weeklyClosedDays;
+      var idx = arr.indexOf(day);
+      if(idx===-1) arr.push(day); else arr.splice(idx,1);
+      save(); renderSchedule();
+      break;
+    }
+    case "add-closed-date": {
+      var dateVal = document.getElementById("closedDateInput").value;
+      if(!dateVal){ toast("請選擇日期"); break; }
+      if(DB.settings.closedDates.indexOf(dateVal)===-1) DB.settings.closedDates.push(dateVal);
+      save(); renderSchedule(); toast("已加入公休日");
+      break;
+    }
+    case "remove-closed-date": {
+      DB.settings.closedDates = DB.settings.closedDates.filter(function(d){return d!==btn.dataset.date;});
+      save(); renderSchedule();
+      break;
+    }
+    case "toggle-emp-workday": {
+      var emp = getEmployee(btn.dataset.emp);
+      if(!emp) break;
+      if(!emp.weeklyWorkDays) emp.weeklyWorkDays=[0,1,2,3,4,5,6];
+      var d = Number(btn.dataset.day);
+      var i = emp.weeklyWorkDays.indexOf(d);
+      if(i===-1) emp.weeklyWorkDays.push(d); else emp.weeklyWorkDays.splice(i,1);
+      save(); renderSchedule();
+      break;
+    }
+
+    case "open-customer-modal": openModal("新增顧客", customerModalHtml()); break;
+    case "edit-customer": openModal("編輯顧客", customerModalHtml(getCustomer(btn.dataset.id))); break;
+    case "view-customer": {
+      var c = getCustomer(btn.dataset.id);
+      if(c) openModal(c.name+" 的顧客資料", customerDetailHtml(c));
+      break;
+    }
+    case "save-customer": saveCustomerForm(btn.dataset.id); break;
+    case "delete-customer": {
+      if(!confirm("確定要刪除此顧客嗎？")) break;
+      DB.customers = DB.customers.filter(function(c){return c.id!==btn.dataset.id;});
+      save(); renderCustomers(); renderInactive(); toast("已刪除");
+      break;
+    }
+
+    case "open-card-modal": {
+      if(DB.customers.length===0){ toast("請先新增顧客"); break; }
+      openModal("新增儲值 / 堂數券", cardModalHtml());
+      break;
+    }
+    case "save-card": saveCardForm(); break;
+    case "view-card": {
+      var card = getCard(btn.dataset.id);
+      if(card) openModal(card.title, cardDetailHtml(card));
+      break;
+    }
+    case "manual-deduct-card": manualDeductCard(btn.dataset.id); break;
+    case "delete-card": {
+      if(!confirm("確定要刪除此票券嗎？")) break;
+      DB.prepaidCards = DB.prepaidCards.filter(function(c){return c.id!==btn.dataset.id;});
+      save(); renderCards(); toast("已刪除");
+      break;
+    }
+
+    case "save-settings": {
+      DB.settings.salonName = document.getElementById("setSalonName").value.trim() || "我的沙龍";
+      DB.settings.monthlyTarget = Number(document.getElementById("setMonthlyTarget").value)||0;
+      save(); renderAll(); toast("設定已儲存");
+      break;
+    }
+    case "export-data": {
+      downloadFile("hair_salon_backup_"+todayStr()+".json", JSON.stringify(DB, null, 2), "application/json");
+      toast("備份已匯出");
+      break;
+    }
+    case "trigger-import": document.getElementById("importFileInput").click(); break;
+    case "wipe-data": {
+      if(!confirm("此操作會清除所有資料且無法復原，確定要繼續嗎？")) break;
+      if(!confirm("再次確認：真的要清除全部資料嗎？")) break;
+      DB = defaultData(); save(); renderAll(); toast("資料已清除");
+      break;
+    }
+  }
+});
+
+document.getElementById("importFileInput").addEventListener("change", function(e){
+  var file = e.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    try{
+      var parsed = JSON.parse(reader.result);
+      if(!confirm("匯入將會覆蓋目前所有資料，確定要繼續嗎？")) return;
+      var d = defaultData();
+      for(var k in d){ if(parsed[k]!==undefined) d[k]=parsed[k]; }
+      DB = d; save(); renderAll();
+      toast("備份匯入成功");
+    }catch(err){
+      toast("匯入失敗：檔案格式不正確");
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
+});
+
+/* ---------------- Form save handlers ---------------- */
+function saveServiceForm(id){
+  var name = document.getElementById("mSvcName").value.trim();
+  if(!name){ toast("請輸入服務名稱"); return; }
+  var data = {
+    name: name,
+    category: document.getElementById("mSvcCategory").value,
+    price: Number(document.getElementById("mSvcPrice").value)||0,
+    duration: Number(document.getElementById("mSvcDuration").value)||0,
+    materialCost: Number(document.getElementById("mSvcMaterialCost").value)||0
+  };
+  if(id){ var s = getService(id); Object.assign(s, data); }
+  else { data.id = uid("svc"); DB.services.push(data); }
+  save(); closeModal(); renderServices(); toast("已儲存服務項目");
+}
+function saveProductForm(id){
+  var name = document.getElementById("mProdName").value.trim();
+  if(!name){ toast("請輸入商品名稱"); return; }
+  var data = {
+    name:name,
+    stock: Number(document.getElementById("mProdStock").value)||0,
+    lowStockThreshold: Number(document.getElementById("mProdThreshold").value)||0
+  };
+  if(id){ var p = getProduct(id); Object.assign(p, data); }
+  else { data.id = uid("prod"); data.price = 0; DB.products.push(data); }
+  save(); closeModal(); renderProducts(); toast("已儲存商品");
+}
+function saveEmployeeForm(id){
+  var name = document.getElementById("mEmpName").value.trim();
+  if(!name){ toast("請輸入員工姓名"); return; }
+  var data = {
+    name:name,
+    phone: document.getElementById("mEmpPhone").value.trim(),
+    role: document.getElementById("mEmpRole").value,
+    hireDate: document.getElementById("mEmpHireDate").value,
+    commissionRate: Number(document.getElementById("mEmpRate").value)||0,
+    active: document.getElementById("mEmpActive").value==="1"
+  };
+  if(id){ var e = getEmployee(id); Object.assign(e, data); }
+  else { data.id = uid("emp"); data.weeklyWorkDays=[0,1,2,3,4,5,6]; DB.employees.push(data); }
+  save(); closeModal(); renderEmployees(); toast("已儲存員工資料");
+}
+function saveCustomerForm(id){
+  var name = document.getElementById("mCustName").value.trim();
+  if(!name){ toast("請輸入顧客姓名"); return; }
+  var data = {
+    name:name,
+    phone: document.getElementById("mCustPhone").value.trim(),
+    note: document.getElementById("mCustNote").value.trim()
+  };
+  if(id){ var c = getCustomer(id); Object.assign(c, data); }
+  else { data.id = uid("cust"); data.createdDate = todayStr(); DB.customers.push(data); }
+  save(); closeModal(); renderCustomers(); renderInactive(); toast("已儲存顧客資料");
+}
+function saveCardForm(){
+  var custId = document.getElementById("mCardCustomer").value;
+  var title = document.getElementById("mCardTitle").value.trim();
+  var type = document.getElementById("mCardType").value;
+  var val = Number(document.getElementById("mCardValue").value)||0;
+  if(!custId){ toast("請選擇顧客"); return; }
+  if(!title){ toast("請輸入票券名稱"); return; }
+  if(val<=0){ toast("請輸入有效金額或堂數"); return; }
+  DB.prepaidCards.push({
+    id: uid("card"), customerId:custId, title:title, type:type,
+    totalValue: val, remaining: val, createdDate: todayStr(),
+    note: document.getElementById("mCardNote").value.trim(), usageLog:[]
+  });
+  save(); closeModal(); renderCards(); toast("票券已建立");
+}
+function manualDeductCard(id){
+  var card = getCard(id);
+  if(!card) return;
+  var amt = Number(document.getElementById("mCardDeduct").value)||0;
+  if(amt<=0){ toast("請輸入扣抵數值"); return; }
+  if(amt>card.remaining){ toast("扣抵數值超過剩餘額度"); return; }
+  card.remaining -= amt;
+  card.usageLog.push({date:todayStr(), amount:amt, note:document.getElementById("mCardDeductNote").value.trim()});
+  save(); closeModal(); renderCards(); toast("已扣抵");
+}
+
+function submitCheckout(){
+  var empId = document.getElementById("coEmployee").value;
+  var emp = getEmployee(empId);
+  if(!emp){ toast("請選擇設計師／服務人員"); return; }
+  if(checkoutState.items.length===0 && checkoutState.products.length===0){ toast("請至少加入一項服務或商品"); return; }
+
+  var payMethod = document.getElementById("coPayMethod").value;
+  var cardId = document.getElementById("coPrepaidCard").value;
+  var card = null;
+  var computed = checkoutState._computed || {revenue:0, commissionBase:0, commission:0, materialCost:0};
+
+  if(payMethod==="prepaid"){
+    card = getCard(cardId);
+    if(!card){ toast("請選擇要扣抵的票券"); return; }
+    var needed = card.type==="balance" ? computed.revenue : checkoutState.items.length;
+    if(needed > card.remaining){ toast("票券餘額／堂數不足"); return; }
+  }
+
+  for(var i=0;i<checkoutState.products.length;i++){
+    var line = checkoutState.products[i];
+    var prod = getProduct(line.productId);
+    if(!prod || prod.stock < line.qty){ toast("商品「"+line.name+"」庫存不足"); return; }
+  }
+
+  var tx = {
+    id: uid("tx"),
+    date: document.getElementById("coDate").value || todayStr(),
+    time: new Date().toTimeString().slice(0,5),
+    customerId: document.getElementById("coCustomer").value || null,
+    employeeId: empId,
+    items: checkoutState.items.map(function(i){ return {serviceId:i.serviceId,name:i.name,category:i.category,price:Number(i.price)||0,materialCost:Number(i.materialCost)||0}; }),
+    products: checkoutState.products.map(function(p){ return {productId:p.productId,name:p.name,price:Number(p.price)||0,qty:Number(p.qty)||1}; }),
+    paymentMethod: payMethod,
+    prepaidCardId: card ? card.id : null,
+    revenue: computed.revenue,
+    materialCost: computed.materialCost,
+    commissionBase: computed.commissionBase,
+    commission: computed.commission,
+    note: document.getElementById("coNote").value.trim()
+  };
+
+  DB.transactions.push(tx);
+
+  tx.products.forEach(function(p){
+    var prod = getProduct(p.productId);
+    if(prod) prod.stock -= p.qty;
+  });
+
+  if(card){
+    var used = card.type==="balance" ? computed.revenue : checkoutState.items.length;
+    card.remaining -= used;
+    card.usageLog.push({date:tx.date, amount:used, note:"結帳扣抵"});
+  }
+
+  save();
+  toast("結帳完成，已計算抽成 " + fmtMoney(computed.commission));
+  resetCheckoutForm();
+  renderRecords();
+}
+
+/* ---------------- Init ---------------- */
+document.getElementById("coDate").value = todayStr();
+switchView("dashboard");
+resetCheckoutForm();
+
+})();
+</script>
+</body>
+</html>
