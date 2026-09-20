@@ -251,8 +251,8 @@ tr:last-child td{border-bottom:none;}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:rgba(20,18,32,0.95);border:1px solid var(--glass-border);color:var(--text-1);padding:11px 20px;border-radius:999px;font-size:13px;font-weight:600;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,0.5);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 
+.grow{flex:1;min-width:0;}
 .item-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border-soft);border-radius:12px;padding:10px;margin-bottom:8px;}
-.item-row .grow{flex:1;min-width:0;}
 .item-row .name{font-size:13px;font-weight:700;}
 .item-row .meta{font-size:11px;color:var(--text-3);}
 .item-row input.num{width:80px;}
@@ -274,6 +274,50 @@ tr:last-child td{border-bottom:none;}
 footer.app-foot{max-width:1100px;margin:30px auto 0;padding:0 16px;color:var(--text-3);font-size:11.5px;text-align:center;}
 .hint-card{padding:14px 16px;font-size:12.5px;color:var(--text-2);line-height:1.6;}
 .hint-card b{color:var(--text-1);}
+
+.avatar-circle{width:42px;height:42px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;background:linear-gradient(135deg,var(--accent-purple),var(--accent-blue));box-shadow:0 0 14px rgba(168,85,247,0.32);}
+.avatar-circle.sm{width:30px;height:30px;font-size:12px;}
+.avatar-circle.lg{width:54px;height:54px;font-size:19px;}
+
+.cust-split{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;}
+@media(max-width:860px){.cust-split{grid-template-columns:1fr;}}
+.cust-list-pane{padding:14px;}
+.cust-list{margin-top:10px;max-height:560px;overflow-y:auto;}
+@media(max-width:860px){.cust-list{max-height:300px;}}
+.cust-row{display:flex;align-items:center;gap:10px;padding:9px;border-radius:14px;cursor:pointer;margin-bottom:5px;border:1px solid transparent;transition:all .18s ease;}
+.cust-row:hover{background:rgba(255,255,255,0.05);}
+.cust-row.selected{background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(236,72,153,0.12));border-color:rgba(168,85,247,0.45);box-shadow:0 0 16px rgba(168,85,247,0.18);}
+.cust-row .cname{font-size:13.5px;font-weight:700;color:var(--text-1);}
+.cust-row .cmeta{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+.cust-detail-pane{padding:22px;min-height:240px;}
+.cust-detail-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
+.cust-detail-head .cdname{font-size:19px;font-weight:800;}
+.cust-detail-actions{margin-left:auto;display:flex;gap:8px;}
+.cust-tags{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:rgba(168,85,247,0.15);color:var(--accent-purple);border:1px solid rgba(168,85,247,0.35);}
+.chip.vip{background:rgba(245,158,11,0.15);color:var(--warning);border-color:rgba(245,158,11,0.4);}
+
+.mini-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:6px 0 18px;}
+.mini-stat{background:rgba(255,255,255,0.04);border:1px solid var(--glass-border-soft);border-radius:14px;padding:12px;}
+.mini-stat .mv{font-family:var(--num-font);font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text-1);}
+.mini-stat .ml{font-size:11px;color:var(--text-3);margin-top:4px;}
+
+.timeline{margin-top:8px;}
+.timeline-item{position:relative;padding-left:20px;padding-bottom:16px;border-left:2px solid var(--glass-border-soft);margin-left:4px;}
+.timeline-item:last-child{border-left-color:transparent;padding-bottom:0;}
+.timeline-item::before{content:"";position:absolute;left:-6px;top:2px;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));box-shadow:0 0 8px rgba(168,85,247,0.6);}
+.timeline-item .tdate{font-size:11px;color:var(--text-3);}
+.timeline-item .ttitle{font-size:13.5px;font-weight:700;margin-top:2px;color:var(--text-1);}
+.timeline-item .tmeta{font-size:12px;color:var(--text-2);margin-top:2px;}
+
+.toggle-switch{position:relative;display:inline-block;width:42px;height:24px;flex:0 0 auto;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,0.12);border:1px solid var(--glass-border);border-radius:999px;cursor:pointer;transition:all .2s ease;}
+.toggle-slider::before{content:"";position:absolute;width:18px;height:18px;left:2px;top:2px;border-radius:50%;background:#fff;transition:all .2s ease;box-shadow:0 2px 6px rgba(0,0,0,0.3);}
+.toggle-switch input:checked + .toggle-slider{background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));border-color:transparent;}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(18px);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 </style>
 </head>
 <body>
@@ -464,11 +508,16 @@ footer.app-foot{max-width:1100px;margin:30px auto 0;padding:0 16px;color:var(--t
   </div>
 
   <div id="subcust-custlist">
-    <div class="search-bar">
-      <input type="text" id="custSearch" placeholder="搜尋姓名或電話">
-      <button class="btn secondary sm" data-action="open-customer-modal">+ 新增顧客</button>
+    <div class="cust-split">
+      <div class="glass cust-list-pane">
+        <div class="search-bar" style="margin-bottom:0;">
+          <input type="text" id="custSearch" placeholder="搜尋姓名或電話">
+        </div>
+        <button class="btn secondary sm block" style="margin-top:10px;" data-action="open-customer-modal">+ 新增顧客</button>
+        <div class="cust-list" id="customerListPane"></div>
+      </div>
+      <div class="glass cust-detail-pane" id="customerDetailPane"></div>
     </div>
-    <div class="card glass"><div class="table-wrap"><table id="customersTable"></table></div></div>
   </div>
 
   <div id="subcust-inactive" style="display:none;">
@@ -894,6 +943,7 @@ function renderRecords(){
 }
 document.getElementById("recFilterDate").addEventListener("change", renderRecords);
 document.getElementById("recFilterEmployee").addEventListener("change", renderRecords);
+document.getElementById("custSearch").addEventListener("input", renderCustomers);
 
 /* ---------------- Settlement ---------------- */
 function renderSettle(){
@@ -987,12 +1037,13 @@ function productModalHtml(p){
 function renderEmployees(){
   var el = document.getElementById("employeesTable");
   if(DB.employees.length===0){ el.innerHTML='<tr><td><div class="empty-state"><span class="em">👤</span>尚未新增員工<br><button class="btn sm" style="margin-top:10px;" data-action="open-employee-modal">+ 新增員工</button></div></td></tr>'; return; }
-  el.innerHTML = '<tr><th>姓名</th><th>電話</th><th>角色</th><th>到職日</th><th>抽成比例</th><th>狀態</th><th></th></tr>'
+  el.innerHTML = '<tr><th>姓名</th><th>電話</th><th>角色</th><th>到職日</th><th>抽成比例</th><th>在職狀態</th><th></th></tr>'
     + DB.employees.map(function(e){
-      return '<tr><td>'+escapeHtml(e.name)+'</td><td>'+escapeHtml(e.phone||"-")+'</td>'
+      var active = e.active!==false;
+      return '<tr><td><div style="display:flex;align-items:center;gap:9px;"><div class="avatar-circle sm">'+escapeHtml(initialsOf(e.name))+'</div>'+escapeHtml(e.name)+'</div></td><td>'+escapeHtml(e.phone||"-")+'</td>'
         +'<td><span class="badge '+(ROLE_CLASS[e.role]||"")+'">'+e.role+'</span></td>'
         +'<td>'+(e.hireDate||"-")+'</td><td>'+e.commissionRate+'%</td>'
-        +'<td>'+(e.active!==false?'<span class="badge ok">在職</span>':'<span class="badge low">停用</span>')+'</td>'
+        +'<td><label class="toggle-switch"><input type="checkbox" '+(active?"checked":"")+' data-action="toggle-employee-active" data-id="'+e.id+'"><span class="toggle-slider"></span></label></td>'
         +'<td><button class="icon-btn" data-action="edit-employee" data-id="'+e.id+'">✎</button> <button class="icon-btn danger" data-action="delete-employee" data-id="'+e.id+'">✕</button></td></tr>';
     }).join("");
 }
@@ -1004,8 +1055,9 @@ function employeeModalHtml(e){
     +'<div class="field"><label>角色</label><select id="mEmpRole">'+ROLES.map(function(r){return '<option value="'+r+'" '+(r===e.role?"selected":"")+'>'+r+'</option>';}).join("")+'</select></div>'
     +'<div class="field"><label>到職日</label><input type="date" id="mEmpHireDate" value="'+(e.hireDate||"")+'"></div>'
     +'<div class="field"><label>抽成比例（%）</label><input type="number" min="0" max="100" id="mEmpRate" value="'+e.commissionRate+'"></div>'
-    +'<div class="field"><label>狀態</label><select id="mEmpActive"><option value="1" '+(e.active!==false?"selected":"")+'>在職</option><option value="0" '+(e.active===false?"selected":"")+'>停用</option></select></div>'
-    +'</div><button class="btn block" data-action="save-employee" data-id="'+(e.id||"")+'">儲存</button>';
+    +'</div>'
+    +'<div class="field toggle-row"><label style="margin:0;">在職狀態</label><label class="toggle-switch"><input type="checkbox" id="mEmpActive" '+(e.active!==false?"checked":"")+'><span class="toggle-slider"></span></label></div>'
+    +'<button class="btn block" data-action="save-employee" data-id="'+(e.id||"")+'">儲存</button>';
 }
 
 /* ---------------- Schedule ---------------- */
@@ -1037,6 +1089,8 @@ function renderSchedule(){
 }
 
 /* ---------------- Customers ---------------- */
+var selectedCustomerId = null;
+
 function customerTransactions(custId){
   return DB.transactions.filter(function(t){ return t.customerId===custId; }).sort(function(a,b){return b.date.localeCompare(a.date);});
 }
@@ -1044,47 +1098,92 @@ function lastVisitDate(custId){
   var tx = customerTransactions(custId);
   return tx.length ? tx[0].date : null;
 }
+function initialsOf(name){ return (name||"?").trim().slice(0,1); }
+
 function renderCustomers(){
   var q = (document.getElementById("custSearch").value||"").trim().toLowerCase();
-  var el = document.getElementById("customersTable");
+  var listEl = document.getElementById("customerListPane");
   var list = DB.customers.filter(function(c){
     if(!q) return true;
     return (c.name||"").toLowerCase().indexOf(q)!==-1 || (c.phone||"").indexOf(q)!==-1;
   });
-  if(list.length===0){ el.innerHTML='<tr><td><div class="empty-state"><span class="em">👤</span>沒有顧客資料<br><button class="btn sm" style="margin-top:10px;" data-action="open-customer-modal">+ 新增顧客</button></div></td></tr>'; return; }
-  el.innerHTML = '<tr><th>姓名</th><th>電話</th><th>最近到店</th><th>消費次數</th><th>累計消費</th><th></th></tr>'
-    + list.map(function(c){
+
+  if(!selectedCustomerId || !list.some(function(c){return c.id===selectedCustomerId;})){
+    selectedCustomerId = list.length ? list[0].id : null;
+  }
+
+  if(list.length===0){
+    listEl.innerHTML = '<div class="empty-state" style="padding:20px 6px;"><span class="em">👤</span>沒有顧客資料</div>';
+  } else {
+    listEl.innerHTML = list.map(function(c){
       var tx = customerTransactions(c.id);
-      var total = sumRevenue(tx);
-      var lv = lastVisitDate(c.id);
-      return '<tr><td>'+escapeHtml(c.name)+'</td><td>'+escapeHtml(c.phone||"-")+'</td><td>'+(lv||"尚無紀錄")+'</td>'
-        +'<td>'+tx.length+'</td><td>'+fmtMoney(total)+'</td>'
-        +'<td><button class="icon-btn" data-action="view-customer" data-id="'+c.id+'">👁</button> <button class="icon-btn" data-action="edit-customer" data-id="'+c.id+'">✎</button> <button class="icon-btn danger" data-action="delete-customer" data-id="'+c.id+'">✕</button></td></tr>';
+      var sel = c.id===selectedCustomerId;
+      return '<div class="cust-row'+(sel?" selected":"")+'" data-action="select-customer" data-id="'+c.id+'">'
+        +'<div class="avatar-circle sm">'+escapeHtml(initialsOf(c.name))+'</div>'
+        +'<div class="grow"><div class="cname">'+escapeHtml(c.name)+'</div>'
+        +'<div class="cmeta">'+escapeHtml(c.phone||"-")+' · 共 '+tx.length+' 次</div></div></div>';
     }).join("");
+  }
+
+  renderCustomerDetail();
 }
-function customerModalHtml(c){
-  c = c || {name:"",phone:"",note:""};
-  return '<div class="form-grid">'
-    +'<div class="field"><label>姓名</label><input id="mCustName" value="'+escapeHtml(c.name)+'"></div>'
-    +'<div class="field"><label>電話</label><input id="mCustPhone" value="'+escapeHtml(c.phone||"")+'"></div>'
-    +'</div><div class="field"><label>備註</label><textarea id="mCustNote" rows="3">'+escapeHtml(c.note||"")+'</textarea></div>'
-    +'<button class="btn block" data-action="save-customer" data-id="'+(c.id||"")+'">儲存</button>';
-}
-function customerDetailHtml(c){
+
+function renderCustomerDetail(){
+  var pane = document.getElementById("customerDetailPane");
+  var c = selectedCustomerId ? getCustomer(selectedCustomerId) : null;
+  if(!c){
+    pane.innerHTML = '<div class="empty-state" style="padding:40px 10px;"><span class="em">👥</span>選擇左側顧客以查看詳細資料<br><button class="btn sm" style="margin-top:12px;" data-action="open-customer-modal">+ 新增顧客</button></div>';
+    return;
+  }
   var tx = customerTransactions(c.id);
+  var total = sumRevenue(tx);
+  var lv = lastVisitDate(c.id);
+  var avgTicket = tx.length ? total/tx.length : 0;
   var cards = DB.prepaidCards.filter(function(cd){return cd.customerId===c.id;});
-  var txHtml = tx.length===0 ? '<div class="empty-state" style="padding:14px;">尚無消費紀錄</div>' : tx.map(function(t){
-    var emp = getEmployee(t.employeeId);
-    return '<div class="pill-line"><span>'+t.date+' · '+escapeHtml(t.items.map(function(i){return i.name;}).join("、"))+' ('+escapeHtml(emp?emp.name:"-")+')</span><b>'+fmtMoney(t.revenue)+'</b></div>';
+  var tags = c.tags || [];
+
+  var tagsHtml = tags.map(function(t){
+    var isVip = t.toUpperCase()==="VIP";
+    return '<span class="chip'+(isVip?" vip":"")+'">'+escapeHtml(t)+'</span>';
   }).join("");
+
+  var timelineHtml = tx.length===0 ? '<div class="empty-state" style="padding:14px;">尚無消費紀錄</div>' : tx.slice(0,20).map(function(t){
+    var emp = getEmployee(t.employeeId);
+    return '<div class="timeline-item"><div class="tdate">'+t.date+'</div>'
+      +'<div class="ttitle">'+escapeHtml(t.items.map(function(i){return i.name;}).join("、")||"消費紀錄")+'</div>'
+      +'<div class="tmeta">服務人員：'+escapeHtml(emp?emp.name:"-")+' · '+fmtMoney(t.revenue)+(t.note?(' · '+escapeHtml(t.note)):"")+'</div></div>';
+  }).join("");
+
   var cardHtml = cards.length===0 ? '<div class="empty-state" style="padding:14px;">尚無票券</div>' : cards.map(function(cd){
     var remainTxt = cd.type==="balance" ? fmtMoney(cd.remaining) : (cd.remaining+" 堂");
     return '<div class="pill-line"><span>'+escapeHtml(cd.title)+'</span><b>剩 '+remainTxt+'</b></div>';
   }).join("");
-  return '<div class="field"><label>電話</label><div>'+escapeHtml(c.phone||"-")+'</div></div>'
-    +'<div class="field"><label>備註</label><div>'+escapeHtml(c.note||"-")+'</div></div>'
-    +'<div class="section-title" style="margin-top:10px;">消費紀錄</div>'+txHtml
-    +'<div class="section-title">持有票券</div>'+cardHtml;
+
+  pane.innerHTML =
+    '<div class="cust-detail-head"><div class="avatar-circle lg">'+escapeHtml(initialsOf(c.name))+'</div>'
+    +'<div><div class="cdname">'+escapeHtml(c.name)+'</div><div class="cust-tags">'+tagsHtml+'</div></div>'
+    +'<div class="cust-detail-actions"><button class="icon-btn" data-action="edit-customer" data-id="'+c.id+'">✎</button>'
+    +'<button class="icon-btn danger" data-action="delete-customer" data-id="'+c.id+'">✕</button></div></div>'
+    +'<div class="pill-line"><span>電話</span><b>'+escapeHtml(c.phone||"-")+'</b></div>'
+    +'<div class="pill-line"><span>備註</span><b>'+escapeHtml(c.note||"-")+'</b></div>'
+    +'<div class="mini-stats">'
+    +'<div class="mini-stat"><div class="mv">'+tx.length+'</div><div class="ml">消費次數</div></div>'
+    +'<div class="mini-stat"><div class="mv">'+fmtMoney(total)+'</div><div class="ml">累積消費</div></div>'
+    +'<div class="mini-stat"><div class="mv">'+fmtMoney(avgTicket)+'</div><div class="ml">平均客單價</div></div>'
+    +'<div class="mini-stat"><div class="mv" style="font-size:14px;">'+(lv||"尚無紀錄")+'</div><div class="ml">最近到店</div></div>'
+    +'</div>'
+    +'<div class="section-title">持有票券</div>'+cardHtml
+    +'<div class="section-title">消費紀錄</div><div class="timeline">'+timelineHtml+'</div>';
+}
+
+function customerModalHtml(c){
+  c = c || {name:"",phone:"",note:"",tags:[]};
+  return '<div class="form-grid">'
+    +'<div class="field"><label>姓名</label><input id="mCustName" value="'+escapeHtml(c.name)+'"></div>'
+    +'<div class="field"><label>電話</label><input id="mCustPhone" value="'+escapeHtml(c.phone||"")+'"></div>'
+    +'</div><div class="field"><label>標籤（以逗號分隔，例如：VIP, 敏感肌）</label><input id="mCustTags" value="'+escapeHtml((c.tags||[]).join(", "))+'"></div>'
+    +'<div class="field"><label>備註</label><textarea id="mCustNote" rows="3">'+escapeHtml(c.note||"")+'</textarea></div>'
+    +'<button class="btn block" data-action="save-customer" data-id="'+(c.id||"")+'">儲存</button>';
 }
 
 function renderInactive(){
@@ -1263,6 +1362,11 @@ document.addEventListener("click", function(e){
     case "open-employee-modal": openModal("新增員工", employeeModalHtml()); break;
     case "edit-employee": openModal("編輯員工", employeeModalHtml(getEmployee(btn.dataset.id))); break;
     case "save-employee": saveEmployeeForm(btn.dataset.id); break;
+    case "toggle-employee-active": {
+      var emp2 = getEmployee(btn.dataset.id);
+      if(emp2){ emp2.active = btn.checked; save(); toast(emp2.active?"已設為在職":"已設為停用"); }
+      break;
+    }
     case "delete-employee": {
       if(!confirm("確定要刪除此員工嗎？歷史結帳紀錄仍會保留。")) break;
       DB.employees = DB.employees.filter(function(e){return e.id!==btn.dataset.id;});
@@ -1303,15 +1407,17 @@ document.addEventListener("click", function(e){
 
     case "open-customer-modal": openModal("新增顧客", customerModalHtml()); break;
     case "edit-customer": openModal("編輯顧客", customerModalHtml(getCustomer(btn.dataset.id))); break;
-    case "view-customer": {
-      var c = getCustomer(btn.dataset.id);
-      if(c) openModal(c.name+" 的顧客資料", customerDetailHtml(c));
+    case "select-customer": {
+      selectedCustomerId = btn.dataset.id;
+      renderCustomers();
       break;
     }
     case "save-customer": saveCustomerForm(btn.dataset.id); break;
     case "delete-customer": {
       if(!confirm("確定要刪除此顧客嗎？")) break;
+      var wasSelected = selectedCustomerId===btn.dataset.id;
       DB.customers = DB.customers.filter(function(c){return c.id!==btn.dataset.id;});
+      if(wasSelected) selectedCustomerId = null;
       save(); renderCustomers(); renderInactive(); toast("已刪除");
       break;
     }
@@ -1411,7 +1517,7 @@ function saveEmployeeForm(id){
     role: document.getElementById("mEmpRole").value,
     hireDate: document.getElementById("mEmpHireDate").value,
     commissionRate: Number(document.getElementById("mEmpRate").value)||0,
-    active: document.getElementById("mEmpActive").value==="1"
+    active: document.getElementById("mEmpActive").checked
   };
   if(id){ var e = getEmployee(id); Object.assign(e, data); }
   else { data.id = uid("emp"); data.weeklyWorkDays=[0,1,2,3,4,5,6]; DB.employees.push(data); }
@@ -1420,13 +1526,15 @@ function saveEmployeeForm(id){
 function saveCustomerForm(id){
   var name = document.getElementById("mCustName").value.trim();
   if(!name){ toast("請輸入顧客姓名"); return; }
+  var tags = document.getElementById("mCustTags").value.split(",").map(function(t){return t.trim();}).filter(Boolean);
   var data = {
     name:name,
     phone: document.getElementById("mCustPhone").value.trim(),
+    tags: tags,
     note: document.getElementById("mCustNote").value.trim()
   };
   if(id){ var c = getCustomer(id); Object.assign(c, data); }
-  else { data.id = uid("cust"); data.createdDate = todayStr(); DB.customers.push(data); }
+  else { data.id = uid("cust"); data.createdDate = todayStr(); DB.customers.push(data); selectedCustomerId = data.id; }
   save(); closeModal(); renderCustomers(); renderInactive(); toast("已儲存顧客資料");
 }
 function saveCardForm(){
