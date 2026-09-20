@@ -1125,13 +1125,29 @@ function renderSettings(){
   document.getElementById("setSalonName").value = DB.settings.salonName;
   document.getElementById("setMonthlyTarget").value = DB.settings.monthlyTarget;
 }
+var downloadsNsPromise = (typeof window.claude !== "undefined" && window.claude.use)
+  ? window.claude.use("downloads").catch(function(){ return null; })
+  : Promise.resolve(null);
+
 function downloadFile(filename, content, mime){
   var blob = new Blob([content], {type:mime||"application/json"});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement("a");
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  function fallbackAnchor(){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    toast("檔案已匯出");
+  }
+  downloadsNsPromise.then(function(ns){
+    if(!ns){ fallbackAnchor(); return; }
+    ns.save({filename:filename, data:blob}).then(function(){
+      toast("檔案已儲存");
+    }).catch(function(err){
+      if(err && err.code === "declined") return;
+      fallbackAnchor();
+    });
+  });
 }
 
 /* ---------------- Central render ---------------- */
@@ -1303,7 +1319,6 @@ document.addEventListener("click", function(e){
     }
     case "export-data": {
       downloadFile("hair_salon_backup_"+todayStr()+".json", JSON.stringify(DB, null, 2), "application/json");
-      toast("備份已匯出");
       break;
     }
     case "trigger-import": document.getElementById("importFileInput").click(); break;
